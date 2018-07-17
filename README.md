@@ -6,7 +6,8 @@
 [![Licensed under the MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/benant/web3.php/blob/master/LICENSE)
 
 
-A php interface for interacting with the Ethereum blockchain and ecosystem.
+This repository has forked version 0.1.4 of sc0vu/web3.php. The latest source for web3.php is in sc0vu/web3.php.
+I referenced https://web3js.readthedocs.io/en/1.0/.
 
 # Install
 
