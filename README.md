@@ -8,6 +8,8 @@
 
 This repository has forked version 0.1.4 of sc0vu/web3.php. The latest source for web3.php is in sc0vu/web3.php.
 I referenced https://web3js.readthedocs.io/en/1.0/.
+I created this repository to distinguish between synchronous and asynchronous operations.
+
 
 # Install
 
