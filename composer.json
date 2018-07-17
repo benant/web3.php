@@ -1,11 +1,11 @@
 {
-    "name": "sc0vu/web3.php",
+    "name": "benant/web3.php",
     "description": "Ethereum web3 interface.",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "sc0Vu",
+            "name": "benant",
             "email": "alk03073135@gmail.com"
         }
     ],
