@@ -18,13 +18,13 @@ Set minimum stability to dev
 
 Then
 ```
-composer require benant/web3.php dev-master
+composer require benant/web3.php 0.1.4-b.0.2
 ```
 
 Or you can add this line in composer.json
 
 ```
-"benant/web3.php": "dev-master"
+"benant/web3.php": "0.1.4-b.0.2"
 ```
 
 
