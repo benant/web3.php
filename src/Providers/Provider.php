@@ -113,4 +113,14 @@ class Provider
     {
         return $this->isBatch;
     }
+
+    /**
+     * getIsAsync
+     * 
+     * @return bool
+     */
+    public function getIsAsync()
+    {
+        return $this->requestManager->async;
+    }
 }

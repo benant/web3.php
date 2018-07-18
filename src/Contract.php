@@ -402,14 +402,18 @@ class Contract
             }
             $params = array_splice($arguments, 0, count($constructor['inputs']));
             $data = $this->ethabi->encodeParameters($constructor, $params);
-            $transaction = [];
-
-            if (count($arguments) > 0) {
-                $transaction = $arguments[0];
-            }
+            $transaction = array(
+                'from' => $arguments['2']['from'],
+                'gas' => $arguments['2']['gas']
+            );
+            
+            // var_dump($transaction); exit;
+            // if (count($arguments) > 0) {
+            //     $transaction = $arguments[0];
+            // }
             $transaction['data'] = '0x' . $this->bytecode . Utils::stripZero($data);
 
-            $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($callback){
+            return $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($callback){
                 if ($err !== null) {
                     return call_user_func($callback, $err, null);
                 }
@@ -430,7 +434,7 @@ class Contract
         if (isset($this->functions)) {
             $arguments = func_get_args();
             $method = array_splice($arguments, 0, 1)[0];
-            $callback = array_pop($arguments);
+            // $callback = array_pop($arguments);
 
             if (!is_string($method) || !isset($this->functions[$method])) {
                 throw new InvalidArgumentException('Please make sure the method exists.');
@@ -440,8 +444,13 @@ class Contract
             if (count($arguments) < count($function['inputs'])) {
                 throw new InvalidArgumentException('Please make sure you have put all function params and callback.');
             }
-            if (is_callable($callback) !== true) {
-                throw new \InvalidArgumentException('The last param must be callback function.');
+
+            if ($this->provider->isBatch || !$this->provider->getIsAsync() ) {
+                $callback = null;
+            } else {
+                if (is_callable($callback) !== true) {
+                    throw new \InvalidArgumentException('The last param must be callback function.');
+                }
             }
             $params = array_splice($arguments, 0, count($function['inputs']));
             $data = $this->ethabi->encodeParameters($function, $params);
@@ -454,8 +463,7 @@ class Contract
             }
             $transaction['to'] = $this->toAddress;
             $transaction['data'] = $functionSignature . Utils::stripZero($data);
-
-            $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($callback){
+            return $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($callback){
                 if ($err !== null) {
                     return call_user_func($callback, $err, null);
                 }
@@ -501,7 +509,7 @@ class Contract
             $transaction['to'] = $this->toAddress;
             $transaction['data'] = $functionSignature . Utils::stripZero($data);
 
-            $this->eth->call($transaction, function ($err, $transaction) use ($callback, $function){
+            return $this->eth->call($transaction, function ($err, $transaction) use ($callback, $function){
                 if ($err !== null) {
                     return call_user_func($callback, $err, null);
                 }
@@ -573,7 +581,7 @@ class Contract
                 $transaction['data'] = $functionSignature . Utils::stripZero($data);
             }
 
-            $this->eth->estimateGas($transaction, function ($err, $gas) use ($callback){
+            return $this->eth->estimateGas($transaction, function ($err, $gas) use ($callback){
                 if ($err !== null) {
                     return call_user_func($callback, $err, null);
                 }

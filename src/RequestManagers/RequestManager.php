@@ -28,16 +28,24 @@ class RequestManager
     protected $timeout;
     
     /**
+     * Asynchronous
+     * 
+     * @var boolean default True(Asynchronous)
+     */
+    public $async = true;
+
+    /**
      * construct
      * 
      * @param string $host
      * @param float $timeout
      * @return void
      */
-    public function __construct($host, $timeout=1)
+    public function __construct($host, $timeout=1, $async=true)
     {
         $this->host = $host;
         $this->timeout = (float) $timeout;
+        $this->async = (boolean) $async;
     }
 
     /**

@@ -40,7 +40,7 @@ class HttpProvider extends Provider implements IProvider
      * 
      * @param \Web3\Methods\Method $method
      * @param callable $callback
-     * @return void
+     * @return Mixed void: aync., object: sync.
      */
     public function send($method, $callback)
     {
@@ -59,7 +59,7 @@ class HttpProvider extends Provider implements IProvider
 
                 return call_user_func($callback, null, $res);
             };
-            $this->requestManager->sendPayload($payload, $proxy);
+            return $this->requestManager->sendPayload($payload, $proxy);
         } else {
             $this->methods[] = $method;
             $this->batch[] = $payload;

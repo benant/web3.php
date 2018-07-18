@@ -35,9 +35,9 @@ class HttpRequestManager extends RequestManager implements IRequestManager
      * @param int $timeout
      * @return void
      */
-    public function __construct($host, $timeout = 1)
+    public function __construct($host, $timeout = 1, $async=true)
     {
-        parent::__construct($host, $timeout);
+        parent::__construct($host, $timeout, $async);
         $this->client = new Client;
     }
 
@@ -62,11 +62,11 @@ class HttpRequestManager extends RequestManager implements IRequestManager
         // $promise->then(
         //     function (ResponseInterface $res) use ($callback) {
         //         var_dump($res->body());
-        //         call_user_func($callback, null, $res);
+        //         return $this->return_result($callback, null, $res);
         //     },
         //     function (RequestException $err) use ($callback) {
         //         var_dump($err->getMessage());
-        //         call_user_func($callback, $err, null);
+        //         return $this->return_result($callback, $err, null);
         //     }
         // );
         try {
@@ -81,7 +81,7 @@ class HttpRequestManager extends RequestManager implements IRequestManager
             $json = json_decode($res->getBody());
 
             if (JSON_ERROR_NONE !== json_last_error()) {
-                call_user_func($callback, new InvalidArgumentException('json_decode error: ' . json_last_error_msg()), null);
+                return $this->return_result($callback, new InvalidArgumentException('json_decode error: ' . json_last_error_msg()), null);
             }
             if (is_array($json)) {
                 // batch results
@@ -101,23 +101,38 @@ class HttpRequestManager extends RequestManager implements IRequestManager
                     }
                 }
                 if (count($errors) > 0) {
-                    call_user_func($callback, $errors, $results);
+                    return $this->return_result($callback, $errors, $results);
                 } else {
-                    call_user_func($callback, null, $results);
+                    return $this->return_result($callback, null, $results);
                 }
             } elseif (isset($json->result)) {
-                call_user_func($callback, null, $json->result);
+                return $this->return_result($callback, null, $json->result);
             } else {
                 if (isset($json->error)) {
                     $error = $json->error;
 
-                    call_user_func($callback, new RPCException(mb_ereg_replace('Error: ', '', $error->message), $error->code), null);
+                    return $this->return_result($callback, new RPCException(mb_ereg_replace('Error: ', '', $error->message), $error->code), null);
                 } else {
-                    call_user_func($callback, new RPCException('Something wrong happened.'), null);
+                    return $this->return_result($callback, new RPCException('Something wrong happened.'), null);
                 }
             }
         } catch (RequestException $err) {
-            call_user_func($callback, $err, null);
+            return $this->return_result($callback, $err, null);
+        }
+    }
+
+    /**
+     * Returns the result either synchronously or asynchronously.
+     * @param function callback function.
+     * @param Mixed error data. Object: exists error, NULL: not exists error. 
+     * @param Mixed response data. Object: response data, NULL: exists error. 
+     * @return Mixed Returns the result from synchronous processing. When it is asynchronous, it executes the callback function.
+     */
+    private function return_result($callback, $error, $data) {
+        if($this->async) {
+            call_user_func($callback, $error, $data);
+        } else {
+            return (object) array('err'=>$error, 'data'=>$data);
         }
     }
 }
