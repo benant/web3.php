@@ -8,6 +8,10 @@ This repository has forked version 0.1.4 of sc0vu/web3.php. The latest source fo
 I referenced https://web3js.readthedocs.io/en/1.0/.
 I created this repository to distinguish between synchronous and asynchronous operations.
 
+# todo
+
+* Checking synchronous processing during batch operation
+* Checking error exception handling in synchronous processing.
 
 # Install
 
@@ -47,7 +51,11 @@ $web3 = new Web3(new HttpProvider(new HttpRequestManager('http://localhost:8545'
 
 // timeout
 $web3 = new Web3(new HttpProvider(new HttpRequestManager('http://localhost:8545', 0.1)));
+
+// sync.
+$web3 = new Web3(new HttpProvider(new HttpRequestManager('http://localhost:8545', 0.1, false)));
 ```
+
 
 ### You can use callback to each rpc call:
 ```php
