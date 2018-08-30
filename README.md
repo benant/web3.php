@@ -58,6 +58,7 @@ $web3 = new Web3(new HttpProvider(new HttpRequestManager('http://localhost:8545'
 
 
 ### You can use callback to each rpc call:
+[async.]
 ```php
 $web3->clientVersion(function ($err, $version) {
     if ($err !== null) {
@@ -68,6 +69,18 @@ $web3->clientVersion(function ($err, $version) {
         echo 'Client version: ' . $version;
     }
 });
+```
+[sync.]
+```php
+$response = $web3->clientVersion();
+if (!$response->err) {
+    // do something
+    return;
+}
+if (isset($response->data)) {
+    echo 'Client version: ' . $response->data;
+}
+
 ```
 
 ### Eth
