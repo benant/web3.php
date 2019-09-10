@@ -65,7 +65,7 @@ $web3->clientVersion(function ($err, $version) {
         // do something
         return;
     }
-    if (isset($client)) {
+    if (isset($version)) {
         echo 'Client version: ' . $version;
     }
 });
